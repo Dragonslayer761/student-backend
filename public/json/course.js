@@ -1,0 +1,44 @@
+const course = [ 
+    {
+        c_id:"c001",
+        course_name:"physics",
+        course_duration:"06",
+        t_credits:"02",
+        p_credit:"03",
+        j_credit:"04"
+    },
+    {
+        c_id:"c002",
+        course_name:"chemistry",
+        course_duration:"10",
+        t_credits:"02",
+        p_credit:"02",
+        j_credit:"03"
+    },
+    {
+        c_id:"c003",
+        course_name:"Mathematics",
+        course_duration:"07",
+        t_credits:"04",
+        p_credit:"04",
+        j_credit:"00"
+    },
+    {
+        c_id:"c004",
+        course_name:"Economics",
+        course_duration:"12",
+        t_credits:"03",
+        p_credit:"03",
+        j_credit:"04"
+    },
+    {
+        c_id:"c005",
+        course_name:"Statistics",
+        course_duration:"12",
+        t_credits:"02",
+        p_credit:"04",
+        j_credit:"04"
+    }
+]
+
+module.exports = course;
