@@ -75,7 +75,7 @@ router.get('/', function (req, res, next) {
 //register user
 router.post('/register/admin', (req, res) => {
   const { a_id, full_name, email, password } = req.body;
-  console.log(a_id)
+
   const salt = bcrypt.genSaltSync(saltRounds);
   let hash = bcrypt.hashSync(password, salt)
   db.transaction(trx => {
@@ -90,16 +90,6 @@ router.post('/register/admin', (req, res) => {
       }).then(trx.commit)
       .catch(trx.rollback)
   }).catch(err => res.status(404).json('unable to register'))
-})
-
-
-//get all student
-router.get('/student', getToken, (req, res) => {
-  db.select('first_name','last_name').from('student').then(name =>{
-    res.send(name)
-  }).catch(err => {
-    res.sendStatus(404).send(err)
-  })
 })
 
 //register new student
@@ -124,44 +114,40 @@ router.post('/register/student',(req,res)=>{
   }).catch(err => res.status(404).json(err.detail))
 })
 
-// get student by its id
-router.get('/student/:id', getToken, (req, res) => {
-  const { username } = req.body;
-  console.log(username)
-  jwt.verify(req.token, key, (err, authData) => {
-    if (err) {
-      res.sendStatus(403)
-    } else {
-      const { id } = req.params
-      let user = {}
-      student.forEach((data) => {
-        if (data.s_id === id) {
-          user = data
-        }
-      })
-      if (user) {
-        res.send({ user, authData, username })
-      } else {
-        res.sendStatus(404)
-      }
-
-    }
+//get all student
+router.get('/student', getToken, (req, res) => {
+  db.select('first_name','last_name').from('student').then(name =>{
+    res.send(name)
+  }).catch(err => {
+    res.sendStatus(404).send(err)
   })
+})
 
-});
+// get student by its id
+// router.get('/student/:id', getToken, (req, res) => {
+//   const { username } = req.body;
+//   console.log(username)
+//   jwt.verify(req.token, key, (err, authData) => {
+//     if (err) {
+//       res.sendStatus(403)
+//     } else {
+//       const { id } = req.params
+//       let user = {}
+//       student.forEach((data) => {
+//         if (data.s_id === id) {
+//           user = data
+//         }
+//       })
+//       if (user) {
+//         res.send({ user, authData, username })
+//       } else {
+//         res.sendStatus(404)
+//       }
 
-//add new student
-router.post('/student', getToken, (req, res) => {
-  const { id, fname, lname, } = req.body;
-  console.log(id, fname, lname);
-  let token = "success"
-  student.push()
-});
+//     }
+//   })
 
-// get all course details 
-router.get('/courses', getToken, (req, res) => {
-  res.send(course)
-});
+// });
 
 
 //add courses
@@ -171,17 +157,40 @@ router.post('/register/course',(req,res)=>{
     trx.insert({
       c_id:c_id,
       course_name:course_name,
-      course_duration:course_duration,
-      t_credit:t_credit,
-      p_credit:p_credit,
-      j_credit:j_credit
+      course_duration:parseInt(course_duration),
+      t_credit:parseInt(t_credit),
+      p_credit:parseInt(p_credit),
+      j_credit:parseInt(j_credit)
     }).into('course').returning('course_name')
-    .then(name =>{
-      res.send(name)
+    .then(course_name =>{
+      res.json(course_name[0])
     })
     .then(trx.commit)
     .catch(trx.rollback)
   }).catch(err => res.status(404).json(err.detail))
+})
+
+//get all course
+router.get('/course',(req,res)=>{
+  db.select('c_id','course_name').from('course').then(course =>{
+    res.send(course)
+  }).catch(err => {
+    res.sendStatus(404).send(err)
+  })
+})
+
+//get student course relation
+router.get('/student/course',(req,res)=>{
+  db.select('c_id','s_id').from('student_course').then(course =>{
+    res.send(course)
+  }).catch(err => {
+    res.sendStatus(404).send(err)
+  })
+})
+//add course for student
+router.post('/student/addcourse',(req,res)=>{
+  const {s_id,c_id,}=req.body
+  
 })
 
 //export the route
